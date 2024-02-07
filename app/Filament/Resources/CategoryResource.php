@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 use Closure;
+use Filament\Forms\Set;
 
 class CategoryResource extends Resource
 {
@@ -28,11 +29,10 @@ class CategoryResource extends Resource
                 Forms\Components\TextInput::make('title')
                     ->required()
                     ->maxLength(2048)
-                    // ->reactive()
-                    // ->afterStateUpdated(function (Closure $set, $state) {
-                    //     $set('slug', Str::slug($state));
-                    // })
-                    ,
+                    ->live(debounce:'2s')
+                    ->afterStateUpdated(
+                        fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
+                    ,                
                 Forms\Components\TextInput::make('slug')
                     ->required()
                     ->maxLength(2048),
